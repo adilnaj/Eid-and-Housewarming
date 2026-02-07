@@ -1,6 +1,6 @@
 {
-  "name": "LuxeInvite: Modern Chic Reservations",
-  "description": "A high-end, animated digital invitation system featuring an architectural grand entrance and AI-powered concierge for exclusive events.",
+  "name": "Afifa & Sadeem's Celebration",
+  "description": "An elegant digital invitation for Afifa and Sadeem's Eid and Housewarming gathering.",
   "requestFramePermissions": [
     "geolocation"
   ]

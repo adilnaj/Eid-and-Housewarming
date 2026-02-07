@@ -2,7 +2,6 @@
 import React from 'react';
 import { EventDetails, ReservationData } from '../types';
 import RSVPForm from './RSVPForm';
-import Concierge from './Concierge';
 
 interface LandingPageProps {
   event: EventDetails;
@@ -14,11 +13,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP }) => {
     <div className="max-w-md mx-auto px-6 py-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 flex flex-col items-center">
       <header className="text-center mb-16 w-full">
         <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto mb-10"></div>
-        <p className="text-[11px] tracking-[0.4em] uppercase text-gray-400 mb-6 block w-full text-center">Your Exclusive Invitation</p>
-        <h1 className="font-serif text-5xl md:text-6xl font-light mb-8 leading-[1.1] tracking-tight text-[#1a1a1a]">
+        <h1 className="font-serif text-4xl md:text-5xl font-light mb-8 leading-[1.2] tracking-tight text-[#1a1a1a]">
           {event.title}
         </h1>
-        <p className="font-serif italic text-gray-500 text-lg mb-12 leading-relaxed max-w-[320px] mx-auto">
+        <p className="font-serif italic text-gray-500 text-lg mb-12 leading-relaxed max-w-[340px] mx-auto">
           {event.description}
         </p>
         <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto"></div>
@@ -54,7 +52,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP }) => {
           <div className="space-y-2">
             <p className="text-xl font-medium tracking-tight text-[#1a1a1a]">{event.dressCode}</p>
             <p className="text-sm text-gray-400 italic font-serif leading-relaxed">
-              Express your unique style within the avant-garde formal theme.
+              We look forward to seeing your elegant festive style.
             </p>
           </div>
         </div>
@@ -64,12 +62,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP }) => {
         <RSVPForm onRSVP={onRSVP} />
       </div>
 
-      <div className="w-full mb-20">
-        <Concierge event={event} />
-      </div>
-
       <footer className="mt-16 text-center pb-8 opacity-40">
-        <p className="text-[9px] tracking-[0.5em] uppercase text-gray-400">Sterling Estate &bull; Private Event</p>
+        <p className="text-[9px] tracking-[0.5em] uppercase text-gray-400">Afifa & Sadeem &bull; Private Residence</p>
       </footer>
     </div>
   );

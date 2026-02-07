@@ -6,12 +6,12 @@ import LandingPage from './components/LandingPage';
 import SuccessScreen from './components/SuccessScreen';
 
 const MOCK_EVENT: EventDetails = {
-  title: "The Solstice Gala",
+  title: "Afifa and Sadeem's Eid and Housewarming",
   date: "Saturday, June 21st, 2025",
-  time: "7:00 PM - Late",
-  location: "Atherton Estate, 1200 Oak Ridge Rd",
-  description: "Join us for an evening of ethereal light and high-fashion elegance to celebrate the longest day of the year.",
-  dressCode: "Avant-Garde Formal"
+  time: "4:00 PM - 9:00 PM",
+  location: "Our New Home, 1200 Oak Ridge Rd",
+  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our beloved community.",
+  dressCode: "Chic & Festive"
 };
 
 const App: React.FC = () => {

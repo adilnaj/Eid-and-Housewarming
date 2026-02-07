@@ -1,10 +1,12 @@
 
 export interface ReservationData {
+  id: string;
   name: string;
   guests: number;
   dietary: string;
   notes: string;
   confirmed: boolean;
+  timestamp: number;
 }
 
 export interface EventDetails {
@@ -19,5 +21,6 @@ export interface EventDetails {
 export enum AppState {
   ENVELOPE = 'ENVELOPE',
   LANDING = 'LANDING',
-  SUCCESS = 'SUCCESS'
+  SUCCESS = 'SUCCESS',
+  ADMIN = 'ADMIN'
 }

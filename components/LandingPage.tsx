@@ -5,10 +5,11 @@ import RSVPForm from './RSVPForm';
 
 interface LandingPageProps {
   event: EventDetails;
-  onRSVP: (data: ReservationData) => void;
+  onRSVP: (data: Omit<ReservationData, 'id' | 'timestamp'>) => void;
+  onAdminClick: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }) => {
   return (
     <div className="max-w-md mx-auto px-6 py-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 flex flex-col items-center">
       <header className="text-center mb-16 w-full">
@@ -63,7 +64,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP }) => {
       </div>
 
       <footer className="mt-16 text-center pb-8 opacity-40">
-        <p className="text-[9px] tracking-[0.5em] uppercase text-gray-400">Afifa & Sadeem &bull; Private Residence</p>
+        <p className="text-[9px] tracking-[0.5em] uppercase text-gray-400">
+          Afifa & Sadeem &bull; Private Residence
+          <span 
+            className="cursor-default select-none ml-1 opacity-0 hover:opacity-10" 
+            onClick={onAdminClick}
+          >.</span>
+        </p>
       </footer>
     </div>
   );

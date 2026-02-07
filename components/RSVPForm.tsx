@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { ReservationData } from '../types';
 
 interface RSVPFormProps {
-  onRSVP: (data: ReservationData) => void;
+  onRSVP: (data: Omit<ReservationData, 'id' | 'timestamp'>) => void;
 }
 
 const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
-  const [formData, setFormData] = useState<ReservationData>({
+  const [formData, setFormData] = useState({
     name: '',
     guests: 1,
     dietary: '',

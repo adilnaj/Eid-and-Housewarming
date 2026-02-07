@@ -10,7 +10,7 @@ const MOCK_EVENT: EventDetails = {
   date: "Saturday, June 21st, 2025",
   time: "4:00 PM - 9:00 PM",
   location: "Our New Home, 1200 Oak Ridge Rd",
-  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our beloved community.",
+  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our friends and family.",
   dressCode: "Chic & Festive"
 };
 

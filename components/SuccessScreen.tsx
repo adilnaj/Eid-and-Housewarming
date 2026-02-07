@@ -1,7 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ReservationData, EventDetails } from '../types';
-import { generateThankYouMessage } from '../services/geminiService';
 
 interface SuccessScreenProps {
   reservation: ReservationData;
@@ -10,16 +9,6 @@ interface SuccessScreenProps {
 }
 
 const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBack }) => {
-  const [aiMessage, setAiMessage] = useState('Your reservation is confirmed.');
-
-  useEffect(() => {
-    const fetchMessage = async () => {
-      const msg = await generateThankYouMessage(reservation);
-      setAiMessage(msg);
-    };
-    fetchMessage();
-  }, [reservation]);
-
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 text-center bg-[#fdfcfb]">
       <div className="max-w-sm w-full space-y-12 animate-in zoom-in-95 duration-1000">
@@ -35,7 +24,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBac
         <div className="space-y-4">
           <h2 className="font-serif text-4xl mb-4 italic text-[#1a1a1a]">You're Confirmed</h2>
           <p className="text-gray-500 font-serif text-xl leading-relaxed italic px-4">
-            "{aiMessage}"
+            Thank you, {reservation.name}. We are so excited to welcome you into our new home and celebrate together!
           </p>
         </div>
 

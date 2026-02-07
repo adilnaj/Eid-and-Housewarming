@@ -8,7 +8,7 @@
     <!-- Text Message Link Preview (Open Graph) -->
     <title>Afifa & Sadeem | Eid & Housewarming</title>
     <meta property="og:title" content="Afifa & Sadeem: Eid & Housewarming">
-    <meta property="og:description" content="Tap to enter and view your invitation to our home.">
+    <meta property="og:description" content="Join us for our Eid and Housewarming celebration. Tap to view your invitation.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1000&auto=format&fit=crop">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -24,7 +24,7 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #080808;
+            background-color: #fdfcfb;
             color: #1a1a1a;
             overflow-x: hidden;
             margin: 0;
@@ -45,11 +45,6 @@
         .perspective-portal {
             perspective: 2000px;
         }
-        /* Mobile optimization for smooth scrolling and prevents rubber banding */
-        .no-bounce {
-          overscroll-behavior: contain;
-        }
-        /* Tap feedback */
         .tap-active:active {
             opacity: 0.7;
             transform: scale(0.98);
@@ -58,15 +53,19 @@
 <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.3.0",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
+    <!-- The app entry point must be explicitly called in the HTML -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>

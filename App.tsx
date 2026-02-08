@@ -17,6 +17,7 @@ const MOCK_EVENT: EventDetails = {
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>(AppState.ENVELOPE);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentReservation, setCurrentReservation] = useState<ReservationData | null>(null);
   const [allReservations, setAllReservations] = useState<ReservationData[]>([]);
 
@@ -38,8 +39,15 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleOpen = () => {
+  const handleStartOpen = () => {
+    // We stay in ENVELOPE state but flag that we are transitioning
+    // to allow LandingPage to mount behind the doors.
+    setIsTransitioning(true);
+  };
+
+  const handleFinishOpen = () => {
     setState(AppState.LANDING);
+    setIsTransitioning(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -50,7 +58,6 @@ const App: React.FC = () => {
       timestamp: Date.now()
     };
     
-    // In a real app, you would send 'newReservation' to a database here
     const updated = [newReservation, ...allReservations];
     setAllReservations(updated);
     localStorage.setItem('as_event_rsvps', JSON.stringify(updated));
@@ -65,11 +72,17 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fdfcfb] text-[#1a1a1a]">
-      {state === AppState.ENVELOPE && (
-        <ModernDoors event={MOCK_EVENT} onOpen={handleOpen} />
+      {/* Doors Overlay: Visible in ENVELOPE state or during transition */}
+      {(state === AppState.ENVELOPE || isTransitioning) && (
+        <ModernDoors 
+          event={MOCK_EVENT} 
+          onStart={handleStartOpen}
+          onComplete={handleFinishOpen} 
+        />
       )}
       
-      {state === AppState.LANDING && (
+      {/* Main Content: Rendered when in LANDING state OR when transitioning to it */}
+      {(state === AppState.LANDING || isTransitioning) && (
         <LandingPage 
           event={MOCK_EVENT} 
           onRSVP={handleRSVP}

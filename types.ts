@@ -3,6 +3,7 @@ export interface ReservationData {
   id: string;
   name: string;
   guests: number;
+  guestNames?: string[];
   dietary: string;
   notes: string;
   confirmed: boolean;

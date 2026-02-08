@@ -14,7 +14,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Default secret password
     if (password === 'celebrate2025') {
       setIsAuthorized(true);
       setError('');
@@ -24,9 +23,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
   };
 
   const downloadCSV = () => {
-    const headers = ['Name', 'Guests', 'Dietary', 'Notes', 'Date Confirmed'];
+    const headers = ['Primary Guest', 'Additional Guests', 'Total Count', 'Dietary', 'Notes', 'Date Confirmed'];
     const rows = reservations.map(r => [
       r.name,
+      r.guestNames?.join(" & ") || 'None',
       r.guests,
       r.dietary || 'None',
       r.notes || 'None',
@@ -76,7 +76,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
 
   return (
     <div className="fixed inset-0 bg-[#fdfcfb] z-[10000] overflow-y-auto px-6 py-12 md:py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <header className="flex justify-between items-end mb-16">
           <div>
             <h1 className="font-serif text-4xl mb-2">Guest List</h1>
@@ -109,29 +109,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
             </div>
           ) : (
             <div className="overflow-hidden border border-gray-100 rounded-3xl bg-white shadow-sm">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Guest</th>
-                    <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Count</th>
-                    <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold hidden md:table-cell">Dietary</th>
-                    <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Time</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {reservations.map((res) => (
-                    <tr key={res.id} className="hover:bg-gray-50/30 transition-colors">
-                      <td className="px-6 py-5">
-                        <p className="font-medium text-sm">{res.name}</p>
-                        {res.dietary && <p className="text-[10px] text-[#d4af37] md:hidden mt-1">{res.dietary}</p>}
-                      </td>
-                      <td className="px-6 py-5 text-sm">{res.guests}</td>
-                      <td className="px-6 py-5 text-xs text-gray-500 hidden md:table-cell italic">{res.dietary || '—'}</td>
-                      <td className="px-6 py-5 text-[10px] text-gray-400">{new Date(res.timestamp).toLocaleDateString()}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
+                  <thead>
+                    <tr className="bg-gray-50/50 border-b border-gray-100">
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Party</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Total</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Dietary/Notes</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {reservations.map((res) => (
+                      <tr key={res.id} className="hover:bg-gray-50/30 transition-colors">
+                        <td className="px-6 py-5">
+                          <p className="font-medium text-sm">{res.name}</p>
+                          {res.guestNames && res.guestNames.length > 0 && (
+                            <p className="text-[10px] text-gray-400 italic font-serif mt-0.5">
+                              & {res.guestNames.join(", ")}
+                            </p>
+                          )}
+                        </td>
+                        <td className="px-6 py-5 text-sm font-medium">{res.guests}</td>
+                        <td className="px-6 py-5">
+                          <p className="text-xs text-gray-500 italic max-w-[200px] truncate">{res.dietary || '—'}</p>
+                          {res.notes && <p className="text-[10px] text-gray-400 truncate">{res.notes}</p>}
+                        </td>
+                        <td className="px-6 py-5 text-[10px] text-gray-400">{new Date(res.timestamp).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

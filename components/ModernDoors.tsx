@@ -4,11 +4,13 @@ import { EventDetails } from '../types';
 
 interface ModernDoorsProps {
   event: EventDetails;
-  onOpen: () => void;
+  onStart?: () => void;
+  onComplete: () => void;
 }
 
-const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
+const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onStart, onComplete }) => {
   const [isOpening, setIsOpening] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     const setHeight = () => {
@@ -22,14 +24,27 @@ const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
   const handleStartOpen = () => {
     if (isOpening) return;
     setIsOpening(true);
+    
+    // Notify parent to mount the LandingPage behind us
+    if (onStart) onStart();
+
+    // Sequence the transition
+    // 1. Doors swing open (1600ms duration in CSS)
+    // 2. Start fading out the entire overlay
     setTimeout(() => {
-      onOpen();
-    }, 1800);
+      setIsExiting(true);
+    }, 2000);
+
+    // 3. Finally unmount after fade out is done
+    setTimeout(() => {
+      onComplete();
+    }, 2800);
   };
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden z-[9999] perspective-[2500px]"
+      className={`fixed inset-0 flex items-center justify-center bg-black overflow-hidden z-[9999] perspective-[2500px] transition-opacity duration-1000 ease-in-out
+        ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
     >
       {/* Cinematic Dark Background */}
@@ -40,24 +55,23 @@ const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
         {/* Architectural Texture */}
         <div className="absolute inset-0 opacity-[0.1] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
         
-        {/* Subtle Floor Reflection (Instead of Shadow) */}
+        {/* Subtle Floor Reflection */}
         <div className={`absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-white/5 to-transparent transition-opacity duration-1000 ${isOpening ? 'opacity-0' : 'opacity-100'}`}></div>
       </div>
 
-      {/* Door Structure - Restored Dimensions */}
+      {/* Door Structure */}
       <div className="relative w-full max-w-[340px] h-[80vh] flex flex-col items-center">
         
-        {/* The Double Doors Container - Frame transitions to transparent */}
+        {/* The Double Doors Container */}
         <div className={`flex-1 w-full flex relative group border-t-[18px] border-x-[18px] transition-all duration-[1200ms] ease-in-out
           ${isOpening ? 'border-transparent shadow-none' : 'border-[#121212] shadow-[0_0_100px_rgba(0,0,0,1)]'}`}>
           
           {/* Left Door Leaf */}
           <div 
             className={`w-1/2 h-full bg-[#121212] border-r border-black relative transition-all duration-[1600ms] ease-in-out origin-left z-20
-              ${isOpening ? '[transform:rotateY(-110deg)] opacity-0' : '[transform:rotateY(0deg)]'}
+              ${isOpening ? '[transform:rotateY(-115deg)] opacity-0' : '[transform:rotateY(0deg)]'}
               shadow-[inset_-1px_0_0_rgba(255,255,255,0.08),15px_0_40px_rgba(0,0,0,0.8)]`}
           >
-            {/* Lighter Panels */}
             <div className="absolute inset-0 p-4 grid grid-rows-3 gap-4">
               {[1, 2, 3].map(i => (
                 <div key={i} className="bg-white/10 backdrop-blur-[8px] border border-white/20 rounded-[1px] shadow-sm relative overflow-hidden">
@@ -70,10 +84,9 @@ const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
           {/* Right Door Leaf */}
           <div 
             className={`w-1/2 h-full bg-[#121212] border-l border-black relative transition-all duration-[1600ms] ease-in-out origin-right z-20
-              ${isOpening ? '[transform:rotateY(110deg)] opacity-0' : '[transform:rotateY(0deg)]'}
+              ${isOpening ? '[transform:rotateY(115deg)] opacity-0' : '[transform:rotateY(0deg)]'}
               shadow-[inset_1px_0_0_rgba(255,255,255,0.08),-15px_0_40px_rgba(0,0,0,0.8)]`}
           >
-            {/* Lighter Panels */}
             <div className="absolute inset-0 p-4 grid grid-rows-3 gap-4">
               {[1, 2, 3].map(i => (
                 <div key={i} className="bg-white/10 backdrop-blur-[8px] border border-white/20 rounded-[1px] shadow-sm relative overflow-hidden">
@@ -96,13 +109,8 @@ const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
               onClick={handleStartOpen}
             >
               <div className="relative w-32 h-32 flex items-center justify-center">
-                {/* Outer subtle pulse */}
                 <div className="absolute inset-0 rounded-full border border-[#d4af37]/30 animate-ping opacity-40"></div>
-                
-                {/* Glassy, very see-thru circle */}
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-2xl rounded-full shadow-2xl border border-white/10 scale-90 group-hover/tap:scale-100 transition-transform duration-500"></div>
-                
-                {/* Minimal Text & Indicator */}
                 <div className="relative z-10 flex flex-col items-center gap-2 pointer-events-none">
                   <div className="w-2 h-2 rounded-full bg-[#d4af37] shadow-[0_0_12px_rgba(212,175,55,0.6)] animate-pulse"></div>
                   <div className="space-y-0.5 text-center">
@@ -116,21 +124,16 @@ const ModernDoors: React.FC<ModernDoorsProps> = ({ event, onOpen }) => {
             </div>
           )}
 
-          {/* Interior Peek - Revealed state stays clean and bright */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-10 bg-white z-10">
-             <div className="animate-in fade-in zoom-in-95 duration-1000 delay-500">
-               <span className="text-[9px] tracking-[0.6em] uppercase text-gray-300 mb-6 block font-medium">Blessings & New Beginnings</span>
-               <h2 className="font-serif text-3xl font-light text-[#1a1a1a] tracking-tight leading-[1.3] mb-8">
-                 {event.title.split(' ').slice(0, 2).join(' ')}<br/>
-                 <span className="italic opacity-80">{event.title.split(' ').slice(2).join(' ')}</span>
-               </h2>
-               <div className="w-12 h-[1px] bg-[#d4af37]/60 mx-auto"></div>
-             </div>
-          </div>
+          {/* 
+            Transparent Interior: 
+            This allows the actual LandingPage (rendered in App.tsx) 
+            to be visible as soon as the doors start swinging.
+          */}
+          <div className="absolute inset-0 bg-transparent z-10 pointer-events-none"></div>
         </div>
       </div>
 
-      {/* Threshold Detailing - Metallic Dark */}
+      {/* Threshold Detailing */}
       <div className={`absolute bottom-0 left-0 right-0 h-2 bg-[#1a1a1a] z-[25] shadow-[inset_0_1px_5px_rgba(255,255,255,0.1)] transition-opacity duration-1000 ${isOpening ? 'opacity-0' : 'opacity-100'}`}></div>
     </div>
   );

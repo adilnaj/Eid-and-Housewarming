@@ -2,6 +2,7 @@
 import React from 'react';
 import { EventDetails, ReservationData } from '../types';
 import RSVPForm from './RSVPForm';
+import Concierge from './Concierge';
 
 interface LandingPageProps {
   event: EventDetails;
@@ -11,7 +12,7 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }) => {
   return (
-    <div className="max-w-md mx-auto px-6 py-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 flex flex-col items-center">
+    <div className="max-w-md mx-auto px-6 py-16 animate-in fade-in slide-in-from-bottom-8 duration-[1500ms] delay-700 flex flex-col items-center fill-mode-both">
       <header className="text-center mb-16 w-full">
         <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto mb-10"></div>
         <h1 className="font-serif text-4xl md:text-5xl font-light mb-8 leading-[1.2] tracking-tight text-[#1a1a1a]">
@@ -23,7 +24,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
         <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto"></div>
       </header>
 
-      <section className="w-full space-y-12 mb-20 bg-white/30 backdrop-blur-sm p-8 rounded-2xl border border-gray-100/50">
+      <section className="w-full space-y-12 mb-20 bg-white/30 backdrop-blur-sm p-8 rounded-2xl border border-gray-100/50 shadow-sm">
         <div className="space-y-3">
           <label className="text-[10px] tracking-[0.3em] uppercase text-gray-400 block font-semibold">When</label>
           <div className="space-y-1">
@@ -59,7 +60,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
         </div>
       </section>
 
-      <div className="w-full mb-16">
+      <div className="w-full mb-16 space-y-12">
+        <Concierge event={event} />
         <RSVPForm onRSVP={onRSVP} />
       </div>
 

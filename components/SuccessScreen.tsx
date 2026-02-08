@@ -9,6 +9,8 @@ interface SuccessScreenProps {
 }
 
 const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBack }) => {
+  const allNames = [reservation.name, ...(reservation.guestNames || [])].filter(n => n.trim() !== '');
+
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 text-center bg-[#fdfcfb]">
       <div className="max-w-sm w-full space-y-12 animate-in zoom-in-95 duration-1000">
@@ -23,15 +25,28 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBac
 
         <div className="space-y-4">
           <h2 className="font-serif text-4xl mb-4 italic text-[#1a1a1a]">You're Confirmed</h2>
-          <p className="text-gray-500 font-serif text-xl leading-relaxed italic px-4">
-            Thank you, {reservation.name}. We are so excited to welcome you into our new home and celebrate together!
-          </p>
+          <div className="text-gray-500 font-serif text-xl leading-relaxed italic px-4 space-y-2">
+            <p>Thank you, {reservation.name}.</p>
+            {reservation.guests > 1 && (
+              <p className="text-sm opacity-80">We look forward to welcoming you and {reservation.guestNames?.join(' & ')} into our new home.</p>
+            )}
+            {!reservation.guestNames?.length && (
+              <p>We are excited to welcome you into our new home!</p>
+            )}
+          </div>
         </div>
 
         <div className="bg-white border border-gray-100 p-8 rounded-3xl shadow-sm space-y-6">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-400 uppercase tracking-[0.2em] text-[10px] font-bold">Guest List</span>
-            <span className="font-medium text-[#1a1a1a]">{reservation.guests} {reservation.guests > 1 ? 'Guests' : 'Guest'}</span>
+          <div className="space-y-3">
+             <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-400 uppercase tracking-[0.2em] text-[10px] font-bold">Party List</span>
+              <span className="font-medium text-[#1a1a1a]">{reservation.guests} {reservation.guests > 1 ? 'Guests' : 'Guest'}</span>
+            </div>
+            <div className="text-right">
+              {allNames.map((name, i) => (
+                <p key={i} className="text-[11px] text-gray-500 italic font-serif">{name}</p>
+              ))}
+            </div>
           </div>
           <div className="w-full h-[1px] bg-gray-50"></div>
           <div className="flex justify-between items-center text-sm">

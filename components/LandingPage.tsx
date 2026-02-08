@@ -2,7 +2,6 @@
 import React from 'react';
 import { EventDetails, ReservationData } from '../types';
 import RSVPForm from './RSVPForm';
-import Concierge from './Concierge';
 
 interface LandingPageProps {
   event: EventDetails;
@@ -60,8 +59,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
         </div>
       </section>
 
-      <div className="w-full mb-16 space-y-12">
-        <Concierge event={event} />
+      <div className="w-full mb-16">
         <RSVPForm onRSVP={onRSVP} />
       </div>
 

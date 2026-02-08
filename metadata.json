@@ -1,7 +1,5 @@
 {
   "name": "Afifa & Sadeem's Celebration",
   "description": "An elegant digital invitation for Afifa and Sadeem's Eid and Housewarming gathering.",
-  "requestFramePermissions": [
-    "geolocation"
-  ]
+  "requestFramePermissions": []
 }

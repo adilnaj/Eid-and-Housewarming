@@ -39,8 +39,19 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-12px); }
         }
+        @keyframes gold-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        @keyframes letter-spacing {
+            0%, 100% { letter-spacing: 0.2em; opacity: 0.8; }
+            50% { letter-spacing: 0.4em; opacity: 1; }
+        }
         .float-animation {
             animation: subtle-float 4s ease-in-out infinite;
+        }
+        .animate-gold-pulse {
+            animation: gold-pulse 3s ease-in-out infinite;
         }
         .perspective-portal {
             perspective: 2000px;

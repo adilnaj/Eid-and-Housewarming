@@ -47,16 +47,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
             </a>
           </div>
         </div>
-
-        <div className="space-y-3">
-          <label className="text-[10px] tracking-[0.3em] uppercase text-gray-400 block font-semibold">Attire</label>
-          <div className="space-y-2">
-            <p className="text-xl font-medium tracking-tight text-[#1a1a1a]">{event.dressCode}</p>
-            <p className="text-sm text-gray-400 italic font-serif leading-relaxed">
-              We look forward to seeing your elegant festive style.
-            </p>
-          </div>
-        </div>
       </section>
 
       <div className="w-full mb-16">

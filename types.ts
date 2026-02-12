@@ -16,7 +16,6 @@ export interface EventDetails {
   time: string;
   location: string;
   description: string;
-  dressCode: string;
 }
 
 export enum AppState {

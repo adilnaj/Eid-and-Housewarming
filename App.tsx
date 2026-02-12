@@ -7,12 +7,11 @@ import SuccessScreen from './components/SuccessScreen';
 import AdminDashboard from './components/AdminDashboard';
 
 const MOCK_EVENT: EventDetails = {
-  title: "Afifa and Sadeem's Eid and Housewarming",
-  date: "Saturday, June 21st, 2025",
-  time: "4:00 PM - 9:00 PM",
-  location: "Our New Home, 1200 Oak Ridge Rd",
-  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our friends and family.",
-  dressCode: "Chic & Festive"
+  title: "Afifa & Sadeem's Eid and Housewarming Party",
+  date: "Friday, March 20th, 2026",
+  time: "6:00 PM",
+  location: "3016 Oak Street, Northlake, TX 76226",
+  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our friends and family."
 };
 
 const App: React.FC = () => {
@@ -40,8 +39,6 @@ const App: React.FC = () => {
   }, []);
 
   const handleStartOpen = () => {
-    // We stay in ENVELOPE state but flag that we are transitioning
-    // to allow LandingPage to mount behind the doors.
     setIsTransitioning(true);
   };
 
@@ -72,7 +69,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fdfcfb] text-[#1a1a1a]">
-      {/* Doors Overlay: Visible in ENVELOPE state or during transition */}
       {(state === AppState.ENVELOPE || isTransitioning) && (
         <ModernDoors 
           event={MOCK_EVENT} 
@@ -81,7 +77,6 @@ const App: React.FC = () => {
         />
       )}
       
-      {/* Main Content: Rendered when in LANDING state OR when transitioning to it */}
       {(state === AppState.LANDING || isTransitioning) && (
         <LandingPage 
           event={MOCK_EVENT} 

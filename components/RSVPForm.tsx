@@ -10,7 +10,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
   const [formData, setFormData] = useState({
     name: '',
     guests: 1,
-    guestNames: [] as string[],
     dietary: '',
     notes: '',
     confirmed: true
@@ -18,24 +17,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleGuestCountChange = (num: number) => {
-    setFormData(prev => {
-      const newGuestNames = [...prev.guestNames];
-      if (num > 1) {
-        // Ensure array has exactly num - 1 entries
-        const targetLen = num - 1;
-        while (newGuestNames.length < targetLen) newGuestNames.push('');
-        if (newGuestNames.length > targetLen) newGuestNames.splice(targetLen);
-      } else {
-        return { ...prev, guests: num, guestNames: [] };
-      }
-      return { ...prev, guests: num, guestNames: newGuestNames };
-    });
-  };
-
-  const handleGuestNameChange = (index: number, val: string) => {
-    const nextNames = [...formData.guestNames];
-    nextNames[index] = val;
-    setFormData({ ...formData, guestNames: nextNames });
+    setFormData(prev => ({ ...prev, guests: num }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,8 +29,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
     }, 1500);
   };
 
-  const isFormValid = formData.name.trim() !== '' && 
-    (formData.guests === 1 || formData.guestNames.every(n => n.trim() !== ''));
+  const isFormValid = formData.name.trim() !== '';
 
   return (
     <div className="bg-white p-6 md:p-10 rounded-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] border border-gray-100">
@@ -83,25 +64,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
             ))}
           </div>
         </div>
-
-        {/* Dynamic Guest Name Fields */}
-        {formData.guests > 1 && (
-          <div className="space-y-8 py-2 animate-in fade-in slide-in-from-top-4 duration-500">
-            {formData.guestNames.map((gName, idx) => (
-              <div key={idx} className="animate-in fade-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
-                <label className="text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-3 block font-semibold">Guest {idx + 2} Name</label>
-                <input 
-                  required
-                  type="text"
-                  className="w-full border-b border-gray-200 py-3 bg-transparent focus:border-[#d4af37] outline-none transition-colors text-[16px] text-[#1a1a1a] rounded-none"
-                  placeholder={`Name of Guest ${idx + 2}`}
-                  value={gName}
-                  onChange={(e) => handleGuestNameChange(idx, e.target.value)}
-                />
-              </div>
-            ))}
-          </div>
-        )}
 
         <div>
           <label className="text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-3 block font-semibold">Dietary Notes</label>

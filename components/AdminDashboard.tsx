@@ -23,10 +23,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
   };
 
   const downloadCSV = () => {
-    const headers = ['Primary Guest', 'Additional Guests', 'Total Count', 'Dietary', 'Notes', 'Date Confirmed'];
+    const headers = ['Guest Name', 'Total Count', 'Dietary', 'Notes', 'Date Confirmed'];
     const rows = reservations.map(r => [
       r.name,
-      r.guestNames?.join(" & ") || 'None',
       r.guests,
       r.dietary || 'None',
       r.notes || 'None',
@@ -124,11 +123,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
                       <tr key={res.id} className="hover:bg-gray-50/30 transition-colors">
                         <td className="px-6 py-5">
                           <p className="font-medium text-sm">{res.name}</p>
-                          {res.guestNames && res.guestNames.length > 0 && (
-                            <p className="text-[10px] text-gray-400 italic font-serif mt-0.5">
-                              & {res.guestNames.join(", ")}
-                            </p>
-                          )}
                         </td>
                         <td className="px-6 py-5 text-sm font-medium">{res.guests}</td>
                         <td className="px-6 py-5">

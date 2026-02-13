@@ -15,7 +15,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
       <div className="max-w-md mx-auto px-6 py-16 animate-in fade-in slide-in-from-bottom-8 duration-[1500ms] delay-700 flex flex-col items-center fill-mode-both">
         <header className="text-center mb-16 w-full">
           <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto mb-10"></div>
-          <h1 className="font-serif text-4xl md:text-5xl font-light mb-8 leading-[1.2] tracking-tight text-[#1a1a1a]">
+          <h1 className="titlefont-serif italic text-4xl md:text-5xl font-light mb-8 leading-[1.2] tracking-tight text-[#1a1a1a]">
             {event.title}
           </h1>
           <p className="font-serif italic text-gray-500 text-lg mb-12 leading-relaxed max-w-[340px] mx-auto">

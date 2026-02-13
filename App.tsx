@@ -7,11 +7,11 @@ import SuccessScreen from './components/SuccessScreen';
 import AdminDashboard from './components/AdminDashboard';
 
 const MOCK_EVENT: EventDetails = {
-  title: "Afifa & Sadeem's Eid and Housewarming Party",
+  title: "Afifa & Sadeem's Eid-Housewarming Party",
   date: "Friday, March 20th, 2026",
   time: "6:00 PM",
   location: "3016 Oak Street, Northlake, TX 76226",
-  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our friends and family."
+  description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our cherished friends and family."
 };
 
 const App: React.FC = () => {

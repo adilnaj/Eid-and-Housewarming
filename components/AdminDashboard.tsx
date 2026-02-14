@@ -14,7 +14,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'celebrate2025') {
+    if (password === 'celebrate2026') {
       setIsAuthorized(true);
       setError('');
     } else {

@@ -10,7 +10,7 @@ const MOCK_EVENT: EventDetails = {
   title: "Afifa & Sadeem's Eid-Housewarming Party",
   date: "Friday, March 20th, 2026",
   time: "6:00 PM",
-  location: "3016 Oak Street, Northlake, TX 76226",
+  location: "3016 Oak Creek Court, Northlake, TX 76226",
   description: "Join us as we celebrate the blessings of Eid and the warmth of our new home. We look forward to sharing this joyful milestone with our cherished friends and family."
 };
 

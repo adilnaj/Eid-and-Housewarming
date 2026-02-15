@@ -5,6 +5,7 @@ import ModernDoors from './components/ModernDoors';
 import LandingPage from './components/LandingPage';
 import SuccessScreen from './components/SuccessScreen';
 import AdminDashboard from './components/AdminDashboard';
+import { fetchRSVPs, saveRSVP } from './services/storage';
 
 const MOCK_EVENT: EventDetails = {
   title: "Afifa & Sadeem's Eid-Housewarming Party",
@@ -27,15 +28,12 @@ const App: React.FC = () => {
       setState(AppState.ADMIN);
     }
 
-    // Load existing reservations from localStorage for the host
-    const saved = localStorage.getItem('as_event_rsvps');
-    if (saved) {
-      try {
-        setAllReservations(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse RSVPs");
-      }
-    }
+    // Load existing reservations from cloud storage
+    const loadData = async () => {
+      const data = await fetchRSVPs();
+      setAllReservations(data);
+    };
+    loadData();
   }, []);
 
   const handleStartOpen = () => {
@@ -48,16 +46,19 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleRSVP = (data: Omit<ReservationData, 'id' | 'timestamp'>) => {
+  const handleRSVP = async (data: Omit<ReservationData, 'id' | 'timestamp'>) => {
     const newReservation: ReservationData = {
       ...data,
       id: Math.random().toString(36).substr(2, 9),
       timestamp: Date.now()
     };
     
+    // Optimistic update for UI speed
     const updated = [newReservation, ...allReservations];
     setAllReservations(updated);
-    localStorage.setItem('as_event_rsvps', JSON.stringify(updated));
+    
+    // Save to persistent storage
+    await saveRSVP(newReservation);
     
     setCurrentReservation(newReservation);
     setState(AppState.SUCCESS);

@@ -81,7 +81,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
         </div>
         
         <p className="text-[10px] text-gray-400 text-center italic opacity-70">
-          Kindly respond by April 10th, 2026
+          Kindly respond by March 10th, 2026
         </p>
       </form>
     </div>

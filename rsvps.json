@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "name": "Jambo Juice",
+    "guests": 5,
+    "dietary": "",
+    "notes": "",
+    "confirmed": true,
+    "id": "u57b9zxqf",
+    "timestamp": 1771172129546
+  }
+]

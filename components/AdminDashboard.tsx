@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ReservationData } from '../types';
+import { isCloudEnabled } from '../services/storage';
 
 interface AdminDashboardProps {
   reservations: ReservationData[];
@@ -23,12 +24,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
   };
 
   const downloadCSV = () => {
-    const headers = ['Guest Name', 'Total Count', 'Dietary', 'Notes', 'Date Confirmed'];
+    // Removed Dietary and Notes from CSV as well to match requested changes
+    const headers = ['Guest Name', 'Total Count', 'Date Confirmed'];
     const rows = reservations.map(r => [
       r.name,
       r.guests,
-      r.dietary || 'None',
-      r.notes || 'None',
       new Date(r.timestamp).toLocaleDateString()
     ]);
     
@@ -43,6 +43,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
     link.click();
     document.body.removeChild(link);
   };
+
+  const cloudStatus = isCloudEnabled();
 
   if (!isAuthorized) {
     return (
@@ -76,12 +78,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
   return (
     <div className="fixed inset-0 bg-[#fdfcfb] z-[10000] overflow-y-auto px-6 py-12 md:py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="max-w-4xl mx-auto">
-        <header className="flex justify-between items-end mb-16">
+        <header className="flex justify-between items-start mb-16">
           <div>
             <h1 className="font-serif text-4xl mb-2">Guest List</h1>
-            <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 font-bold">
-              {reservations.length} RSVPs &bull; {totalGuests} Total Guests
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 font-bold">
+                {reservations.length} RSVPs &bull; {totalGuests} Total Guests
+              </p>
+              
+              {/* Connection Status Badge */}
+              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full border ${cloudStatus ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${cloudStatus ? 'bg-green-500' : 'bg-orange-400'}`}></div>
+                <span className={`text-[8px] uppercase tracking-wider font-bold ${cloudStatus ? 'text-green-700' : 'text-orange-700'}`}>
+                  {cloudStatus ? 'Cloud Connected' : 'Local Only'}
+                </span>
+              </div>
+            </div>
           </div>
           <button 
             onClick={onClose}
@@ -104,17 +116,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
         <div className="space-y-4">
           {reservations.length === 0 ? (
             <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-3xl">
-              <p className="font-serif italic text-gray-400">No reservations confirmed yet.</p>
+              <p className="font-serif italic text-gray-400">No reservations found.</p>
+              {!cloudStatus && <p className="text-[10px] text-orange-400 mt-2">Database Disconnected - Showing Local Data Only</p>}
             </div>
           ) : (
             <div className="overflow-hidden border border-gray-100 rounded-3xl bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[600px]">
+                <table className="w-full text-left min-w-[500px]">
                   <thead>
                     <tr className="bg-gray-50/50 border-b border-gray-100">
-                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Party</th>
-                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Total</th>
-                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Dietary/Notes</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Party Name</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Guests</th>
                       <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Date</th>
                     </tr>
                   </thead>
@@ -125,10 +137,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
                           <p className="font-medium text-sm">{res.name}</p>
                         </td>
                         <td className="px-6 py-5 text-sm font-medium">{res.guests}</td>
-                        <td className="px-6 py-5">
-                          <p className="text-xs text-gray-500 italic max-w-[200px] truncate">{res.dietary || '—'}</p>
-                          {res.notes && <p className="text-[10px] text-gray-400 truncate">{res.notes}</p>}
-                        </td>
                         <td className="px-6 py-5 text-[10px] text-gray-400">{new Date(res.timestamp).toLocaleDateString()}</td>
                       </tr>
                     ))}

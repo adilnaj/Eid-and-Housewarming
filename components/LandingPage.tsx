@@ -18,8 +18,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ event, onRSVP, onAdminClick }
           <h1 className="titlefont-serif italic text-4xl md:text-5xl font-light mb-8 leading-[1.2] tracking-tight text-[#1a1a1a]">
             {event.title}
           </h1>
-          <p className="font-serif italic text-gray-500 text-lg mb-12 leading-relaxed max-w-[340px] mx-auto">
+          <p className="font-serif italic text-gray-500 text-lg mb-8 leading-relaxed max-w-[340px] mx-auto">
             {event.description}
+          </p>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-gray-400 font-medium mb-12">
+            No boxed gifts, please
           </p>
           <div className="w-12 h-[1px] bg-[#d4af37]/40 mx-auto"></div>
         </header>

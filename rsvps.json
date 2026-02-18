@@ -1,14 +1,5 @@
 [
   {
-    "name": "Test",
-    "guests": 1,
-    "dietary": "",
-    "notes": "",
-    "confirmed": true,
-    "id": "cp00r26lr",
-    "timestamp": 1771459045442
-  },
-  {
     "name": "Mrs & Mr. Adil Najmuddin ",
     "guests": 2,
     "dietary": "",

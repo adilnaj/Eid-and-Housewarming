@@ -25,7 +25,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBac
           <h2 className="font-serif text-4xl mb-4 italic text-[#1a1a1a]">You're Confirmed</h2>
           <div className="text-gray-500 font-serif text-xl leading-relaxed italic px-4 space-y-2">
             <p>Thank you, {reservation.name}.</p>
-            <p className="text-sm opacity-80">We are excited to celebrate with you!!</p>
+            <p className="text-sm opacity-80">We are excited to celebrate with you!</p>
           </div>
         </div>
 

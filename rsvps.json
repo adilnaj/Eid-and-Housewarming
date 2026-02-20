@@ -1,14 +1,5 @@
 [
   {
-    "name": "Umar Ahmer",
-    "guests": 4,
-    "dietary": "",
-    "notes": "",
-    "confirmed": true,
-    "id": "sai55fdx3",
-    "timestamp": 1771600482786
-  },
-  {
     "name": "Samina Farooqui ",
     "guests": 4,
     "dietary": "",
@@ -25,15 +16,6 @@
     "confirmed": true,
     "id": "pipb5adqu",
     "timestamp": 1771540091576
-  },
-  {
-    "name": "Leeza Ahmer ",
-    "guests": 1,
-    "dietary": "",
-    "notes": "",
-    "confirmed": true,
-    "id": "hucf90kr0",
-    "timestamp": 1771533572794
   },
   {
     "name": "Kanwal Ahmer",

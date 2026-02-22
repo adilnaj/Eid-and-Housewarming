@@ -1,14 +1,5 @@
 [
   {
-    "name": "Test",
-    "guests": 1,
-    "dietary": "",
-    "notes": "",
-    "confirmed": true,
-    "id": "yrbpa0fpq",
-    "timestamp": 1771794612030
-  },
-  {
     "name": "Ikhtabar Siddiqui",
     "guests": 1,
     "dietary": "",

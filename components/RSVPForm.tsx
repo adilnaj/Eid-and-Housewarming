@@ -42,7 +42,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ onRSVP }) => {
             required
             type="text"
             className="w-full border-b border-gray-200 py-3 bg-transparent focus:border-[#d4af37] outline-none transition-colors text-[16px] text-[#1a1a1a] rounded-none"
-            placeholder="e.g. Julian Sterling"
+            placeholder="e.g. Shah Rukh Khan"
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
           />

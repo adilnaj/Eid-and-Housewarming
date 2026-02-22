@@ -23,6 +23,7 @@ const getEnvVar = (key: string) => {
   return '';
 };
 
+
 // CONFIGURATION
 const GITHUB_TOKEN = getEnvVar('GITHUB_TOKEN');
 const REPO_OWNER = getEnvVar('REPO_OWNER');
@@ -69,71 +70,127 @@ export const fetchRSVPs = async (): Promise<ReservationData[]> => {
   }
 };
 
-export const saveRSVP = async (newRsvp: ReservationData): Promise<void> => {
-  // Always save to local storage as backup/immediate UI update
-  const saved = localStorage.getItem('as_event_rsvps');
-  const currentLocal = saved ? JSON.parse(saved) : [];
-  localStorage.setItem('as_event_rsvps', JSON.stringify([newRsvp, ...currentLocal]));
+// Helper to handle GitHub read-modify-write
+const updateGitHubFile = async (modifier: (currentData: ReservationData[]) => ReservationData[], message: string) => {
+    if (!isCloudEnabled()) return;
 
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+    
+    try {
+        // 1. GET current file
+        const getResponse = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+
+        let currentData: ReservationData[] = [];
+        let sha = '';
+
+        if (getResponse.ok) {
+            const fileData = await getResponse.json();
+            sha = fileData.sha;
+            try {
+                currentData = JSON.parse(fromBase64(fileData.content));
+            } catch (e) {
+                currentData = [];
+            }
+        } else if (getResponse.status === 404) {
+             // File doesn't exist
+             console.log("[Storage] File doesn't exist yet, creating new.");
+        } else {
+            throw new Error("Failed to fetch current file for update");
+        }
+
+        // 2. Modify data
+        const updatedData = modifier(currentData);
+        const contentEncoded = toBase64(JSON.stringify(updatedData, null, 2));
+
+        // 3. PUT update
+        const putResponse = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                content: contentEncoded,
+                sha: sha || undefined
+            })
+        });
+
+        if (!putResponse.ok) {
+             const err = await putResponse.json();
+             throw new Error(`GitHub Write Error: ${err.message}`);
+        }
+        
+        console.log('[Storage] GitHub sync successful.');
+    } catch (error) {
+        console.error('[Storage] GitHub update failed:', error);
+        throw error;
+    }
+};
+
+const updateLocalStorage = (modifier: (currentData: ReservationData[]) => ReservationData[]) => {
+    const saved = localStorage.getItem('as_event_rsvps');
+    const currentLocal = saved ? JSON.parse(saved) : [];
+    const updated = modifier(currentLocal);
+    localStorage.setItem('as_event_rsvps', JSON.stringify(updated));
+    return updated;
+};
+
+export const saveRSVP = async (newRsvp: ReservationData): Promise<void> => {
+  // Local
+  updateLocalStorage((current) => [newRsvp, ...current]);
+
+  // Cloud
   if (!isCloudEnabled()) {
     console.warn("[Storage] GitHub credentials missing. Saved locally only.");
     return;
   }
 
   try {
-    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-    
-    // 1. GET current file to get the SHA (required for update) and current data
-    const getResponse = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    let currentData: ReservationData[] = [];
-    let sha = '';
-
-    if (getResponse.ok) {
-      const fileData = await getResponse.json();
-      sha = fileData.sha;
-      try {
-        currentData = JSON.parse(fromBase64(fileData.content));
-      } catch (e) {
-        currentData = [];
-      }
-    } else if (getResponse.status === 404) {
-      console.log("[Storage] File doesn't exist yet, creating new.");
-    } else {
-      throw new Error("Failed to fetch current file for update");
-    }
-
-    // 2. Add new RSVP
-    const updatedData = [newRsvp, ...currentData];
-    const contentEncoded = toBase64(JSON.stringify(updatedData, null, 2));
-
-    // 3. PUT update to GitHub
-    const putResponse = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `RSVP: ${newRsvp.name} (${newRsvp.guests} guests)`,
-        content: contentEncoded,
-        sha: sha || undefined // Only include SHA if file existed
-      })
-    });
-
-    if (!putResponse.ok) {
-      const err = await putResponse.json();
-      throw new Error(`GitHub Write Error: ${err.message}`);
-    }
-
-    console.log('[Storage] RSVP successfully synced to GitHub.');
-  } catch (error) {
-    console.error('[Storage] Failed to save to GitHub:', error);
-    alert("Saved locally. Could not sync to cloud (Check console).");
+      await updateGitHubFile(
+          (current) => [newRsvp, ...current],
+          `RSVP: ${newRsvp.name} (${newRsvp.guests} guests)`
+      );
+  } catch (e) {
+      alert("Saved locally. Could not sync to cloud (Check console).");
   }
+};
+
+export const updateRSVP = async (updatedRsvp: ReservationData): Promise<void> => {
+    // Local
+    updateLocalStorage((current) => current.map(r => r.id === updatedRsvp.id ? updatedRsvp : r));
+
+    // Cloud
+    if (!isCloudEnabled()) return;
+
+    try {
+        await updateGitHubFile(
+            (current) => current.map(r => r.id === updatedRsvp.id ? updatedRsvp : r),
+            `Update RSVP: ${updatedRsvp.name}`
+        );
+    } catch (e) {
+        alert("Updated locally. Could not sync to cloud (Check console).");
+    }
+};
+
+export const deleteRSVP = async (id: string): Promise<void> => {
+    // Local
+    updateLocalStorage((current) => current.filter(r => r.id !== id));
+
+    // Cloud
+    if (!isCloudEnabled()) return;
+
+    try {
+        await updateGitHubFile(
+            (current) => current.filter(r => r.id !== id),
+            `Delete RSVP: ${id}`
+        );
+    } catch (e) {
+        alert("Deleted locally. Could not sync to cloud (Check console).");
+    }
 };

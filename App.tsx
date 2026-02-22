@@ -98,6 +98,7 @@ const App: React.FC = () => {
         <AdminDashboard 
           reservations={allReservations} 
           onClose={() => setState(AppState.LANDING)}
+          onUpdate={setAllReservations}
         />
       )}
     </div>

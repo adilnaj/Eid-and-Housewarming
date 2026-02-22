@@ -1,17 +1,22 @@
 
 import React, { useState } from 'react';
 import { ReservationData } from '../types';
-import { isCloudEnabled } from '../services/storage';
+import { isCloudEnabled, updateRSVP, deleteRSVP } from '../services/storage';
 
 interface AdminDashboardProps {
   reservations: ReservationData[];
   onClose: () => void;
+  onUpdate: (data: ReservationData[]) => void;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose, onUpdate }) => {
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [error, setError] = useState('');
+  const [editingRsvp, setEditingRsvp] = useState<ReservationData | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const [deletingRsvpId, setDeletingRsvpId] = useState<string | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +26,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
     } else {
       setError('Invalid Access Key');
     }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setDeletingRsvpId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingRsvpId) return;
+    
+    // Optimistic update: Remove from UI immediately
+    const updatedList = reservations.filter(r => r.id !== deletingRsvpId);
+    onUpdate(updatedList);
+    setDeletingRsvpId(null);
+    
+    // Then sync with storage
+    try {
+      await deleteRSVP(deletingRsvpId);
+    } catch (error) {
+      console.error("Failed to delete RSVP:", error);
+      // Optionally revert UI here if needed
+    }
+  };
+
+  const handleEditClick = (rsvp: ReservationData) => {
+    setEditingRsvp({ ...rsvp });
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRsvp) return;
+
+    setIsProcessing(true);
+    await updateRSVP(editingRsvp);
+    
+    const updatedList = reservations.map(r => r.id === editingRsvp.id ? editingRsvp : r);
+    onUpdate(updatedList);
+    
+    setEditingRsvp(null);
+    setIsProcessing(false);
   };
 
   const downloadCSV = () => {
@@ -122,22 +166,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
           ) : (
             <div className="overflow-hidden border border-gray-100 rounded-3xl bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[500px]">
+                <table className="w-full text-left min-w-[600px]">
                   <thead>
                     <tr className="bg-gray-50/50 border-b border-gray-100">
                       <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Party Name</th>
                       <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Guests</th>
                       <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold">Date</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-[0.2em] text-gray-400 font-bold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {reservations.map((res) => (
-                      <tr key={res.id} className="hover:bg-gray-50/30 transition-colors">
+                      <tr key={res.id} className="hover:bg-gray-50/30 transition-colors group">
                         <td className="px-6 py-5">
                           <p className="font-medium text-sm">{res.name}</p>
                         </td>
                         <td className="px-6 py-5 text-sm font-medium">{res.guests}</td>
                         <td className="px-6 py-5 text-[10px] text-gray-400">{new Date(res.timestamp).toLocaleDateString()}</td>
+                        <td className="px-6 py-5 text-right">
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClick(res);
+                              }}
+                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Edit"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(res.id);
+                              }}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -147,6 +216,82 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ reservations, onClose }
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deletingRsvpId && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[10001] flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-xl animate-in fade-in zoom-in-95 duration-200 text-center">
+            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </div>
+            <h2 className="font-serif text-xl mb-2">Delete Reservation?</h2>
+            <p className="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingRsvpId(null)}
+                className="flex-1 h-12 border border-gray-100 rounded-xl text-[10px] uppercase tracking-[0.2em] hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 h-12 bg-red-500 text-white rounded-xl text-[10px] uppercase tracking-[0.2em] hover:bg-red-600 transition-colors shadow-sm shadow-red-200"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingRsvp && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[10001] flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-xl animate-in fade-in zoom-in-95 duration-200">
+            <h2 className="font-serif text-2xl mb-6">Edit Reservation</h2>
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Guest Name</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-[#d4af37] transition-colors"
+                  value={editingRsvp.name}
+                  onChange={(e) => setEditingRsvp({ ...editingRsvp, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Total Guests</label>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-[#d4af37] transition-colors"
+                  value={editingRsvp.guests}
+                  onChange={(e) => setEditingRsvp({ ...editingRsvp, guests: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setEditingRsvp(null)}
+                  className="flex-1 h-12 border border-gray-100 rounded-xl text-[10px] uppercase tracking-[0.2em] hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isProcessing}
+                  className="flex-1 h-12 bg-[#1a1a1a] text-white rounded-xl text-[10px] uppercase tracking-[0.2em] disabled:opacity-50"
+                >
+                  {isProcessing ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

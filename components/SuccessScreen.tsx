@@ -25,7 +25,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBac
           <h2 className="font-serif text-4xl mb-4 italic text-[#1a1a1a]">You're Confirmed</h2>
           <div className="text-gray-500 font-serif text-xl leading-relaxed italic px-4 space-y-2">
             <p>Thank you, {reservation.name}.</p>
-            <p className="text-sm opacity-80">We are excited to celebrate with you!</p>
+            <p className="text-sm opacity-80">We are excited to welcome you into our new home!</p>
           </div>
         </div>
 
@@ -51,15 +51,17 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ reservation, event, onBac
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col gap-6">
+        <div className="pt-8 flex flex-col gap-4">
            <button 
-             className="w-full h-[60px] bg-[#1a1a1a] text-white text-[11px] tracking-[0.5em] uppercase rounded-2xl shadow-lg tap-active"
              onClick={() => window.print()}
+             className="w-full h-[50px] bg-[#1a1a1a] text-white text-[10px] tracking-[0.4em] uppercase rounded-xl shadow-lg tap-active flex items-center justify-center gap-3"
            >
-             Save Invitation
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+             Download Invite
            </button>
+
            <button 
-             className="text-[11px] tracking-[0.4em] uppercase text-[#d4af37] font-bold tap-active"
+             className="text-[10px] tracking-[0.4em] uppercase text-gray-400 font-bold tap-active mt-2"
              onClick={onBack}
            >
              Close
